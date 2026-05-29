@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bayar SPP – TPQ Subulunnajah</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #00C896;
+    --green-dark: #00A07A;
+    --green-light: #E0FBF4;
+    --navy: #0F2744;
+    --yellow: #FFD166;
+    --red: #FF6B6B;
+    --blue: #3B82F6;
+    --bg: #F0FDF9;
+    --card: #FFFFFF;
+    --text: #0F2744;
+    --muted: #6B7C99;
+    --border: #D1EEE8;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    background-image: radial-gradient(circle at 10% 10%, rgba(0,200,150,0.10) 0%, transparent 45%),
+                      radial-gradient(circle at 90% 90%, rgba(14,165,160,0.08) 0%, transparent 45%);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy);
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-brand { display: flex; align-items: center; gap: 10px; }
+  .header-icon { font-size: 26px; }
+  .header-title { color: #fff; font-size: 15px; font-weight: 700; line-height: 1.2; }
+  .header-sub { color: rgba(255,255,255,0.5); font-size: 11px; }
+  .admin-link {
+    color: var(--green); font-size: 12px; font-weight: 600;
+    text-decoration: none; padding: 6px 12px;
+    border: 1px solid rgba(0,200,150,0.4); border-radius: 20px;
+    transition: background 0.2s;
+  }
+  .admin-link:hover { background: rgba(0,200,150,0.1); }
+
+  /* ── DEADLINE BANNER ── */
+  .deadline-banner {
+    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .deadline-banner .icon { font-size: 20px; }
+  .deadline-banner p { color: #fff; font-size: 13px; font-weight: 600; line-height: 1.4; }
+  .deadline-banner p span { font-size: 12px; font-weight: 400; opacity: 0.85; display: block; }
+
+  /* ── MAIN ── */
+  .main { max-width: 600px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  .section-title {
+    font-size: 22px; font-weight: 800; color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    font-size: 13px; color: var(--muted); margin-bottom: 24px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 24px;
+    border: 1.5px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .form-group { margin-bottom: 18px; }
+
+  label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--navy); margin-bottom: 7px;
+  }
+  label .req { color: var(--red); margin-left: 2px; }
+
+  input[type="text"],
+  input[type="number"],
+  select, textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; color: var(--text);
+    background: #FAFFFE; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none; appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(0,200,150,0.15);
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7C99' fill='none' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+  }
+
+  /* ── METODE TABS ── */
+  .metode-tabs {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-bottom: 4px;
+  }
+  .tab-btn {
+    padding: 14px; border-radius: 12px;
+    border: 1.5px solid var(--border); cursor: pointer;
+    text-align: center; background: #FAFFFE;
+    transition: all 0.2s; font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .tab-btn .tab-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+  .tab-btn .tab-label { font-size: 13px; font-weight: 700; color: var(--muted); }
+  .tab-btn:hover { border-color: var(--green); }
+  .tab-btn.active {
+    border-color: var(--green); background: var(--green-light);
+  }
+  .tab-btn.active .tab-label { color: var(--green-dark); }
+
+  /* ── TRANSFER BOX ── */
+  .transfer-box {
+    display: none;
+    background: #FFFBEB;
+    border: 1.5px dashed #FCD34D;
+    border-radius: 14px; padding: 20px;
+    margin-top: 14px;
+  }
+  .transfer-box.show { display: block; }
+  .rekening-info {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .rek-icon { font-size: 28px; }
+  .rek-detail { flex: 1; }
+  .rek-bank { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .rek-num {
+    font-size: 20px; font-weight: 800; color: var(--navy);
+    letter-spacing: 2px; margin: 2px 0;
+  }
+  .rek-name { font-size: 13px; color: var(--muted); }
+  .copy-btn {
+    padding: 7px 14px; border-radius: 20px;
+    background: var(--navy); color: #fff;
+    border: none; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .copy-btn:hover { background: #1a3a5c; }
+
+  /* ── UPLOAD ── */
+  .upload-area {
+    border: 2px dashed var(--border); border-radius: 12px;
+    padding: 24px; text-align: center; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: #FAFFFE; position: relative;
+  }
+  .upload-area:hover { border-color: var(--green); background: var(--green-light); }
+  .upload-area.has-file { border-color: var(--green); background: var(--green-light); }
+  .upload-icon { font-size: 32px; margin-bottom: 8px; }
+  .upload-text { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .upload-text strong { color: var(--green-dark); }
+  .upload-area input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+  }
+  .file-preview {
+    margin-top: 10px; font-size: 12px;
+    color: var(--green-dark); font-weight: 600;
+  }
+
+  /* ── SUBMIT BTN ── */
+  .btn-submit {
+    width: 100%; padding: 17px;
+    background: var(--green); color: #fff; border: none;
+    border-radius: 14px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 6px 20px rgba(0,200,150,0.35);
+    margin-top: 8px;
+  }
+  .btn-submit:hover { background: var(--green-dark); box-shadow: 0 8px 24px rgba(0,200,150,0.45); }
+  .btn-submit:active { transform: scale(0.98); }
+  .btn-submit:disabled { background: #B2E8DA; box-shadow: none; cursor: not-allowed; }
+
+  /* ── ALERTS ── */
+  .alert {
+    padding: 14px 18px; border-radius: 12px;
+    font-size: 14px; font-weight: 500; margin-bottom: 20px; display: none;
+  }
+  .alert.show { display: block; }
+  .alert.error { background: #FFE8E8; color: #D92D20; border: 1.5px solid #FCA5A5; }
+  .alert.success { background: var(--green-light); color: var(--green-dark); border: 1.5px solid var(--green); }
+
+  /* ── SUCCESS SCREEN ── */
+  .success-screen {
+    display: none; text-align: center; padding: 40px 24px;
+  }
+  .success-screen.show { display: block; }
+  .success-anim { font-size: 72px; margin-bottom: 16px; animation: bounce 0.6s ease; }
+  @keyframes bounce {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+  .success-screen h2 { font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 10px; }
+  .success-screen p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .status-badge {
+    display: inline-block; margin: 16px auto;
+    padding: 10px 20px; border-radius: 30px;
+    background: #FFFBEB; color: #92400E;
+    border: 1.5px solid #FDE68A;
+    font-size: 13px; font-weight: 700;
+  }
+  .btn-back {
+    margin-top: 16px; padding: 13px 28px;
+    background: var(--navy); color: #fff; border: none;
+    border-radius: 12px; font-family: inherit;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-back:hover { background: #1a3a5c; }
+
+  @media (max-width: 480px) {
+    .card { padding: 18px; }
+    .section-title { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <span class="header-icon">🕌</span>
+    <div>
+      <div class="header-title">TPQ Subulunnajah</div>
+      <div class="header-sub">Sistem Pembayaran SPP</div>
+    </div>
+  </div>
+  <a href="/login.html" class="admin-link">🔐 Admin</a>
+</div>
+
+<div class="deadline-banner">
+  <span class="icon">⏰</span>
+  <p>Batas pembayaran SPP: <strong>tanggal 12 setiap bulan</strong>
+  <span>Pastikan pembayaran sebelum tanggal tersebut ya!</span></p>
+</div>
+
+<div class="main">
+  <h1 class="section-title">Form Pembayaran SPP 📋</h1>
+  <p class="section-sub">Isi form dengan lengkap dan benar. Pembayaran akan divalidasi oleh admin TPQ.</p>
+
+  <div class="alert" id="alert"></div>
+
+  <!-- FORM -->
+  <div id="formSection">
+    <form id="payForm">
+
+      <!-- Data Orang Tua & Santri -->
+      <div class="card">
+        <div class="card-title">👤 Data Orang Tua & Santri</div>
+
+        <div class="form-group">
+          <label>Nama Orang Tua <span class="req">*</span></label>
+          <input type="text" name="nama_orangtua" placeholder="Contoh: Bapak Ahmad">
+        </div>
+
+        <div class="form-group">
+          <label>Nama Santri <span class="req">*</span></label>
+          <input type="text" name="nama_santri" placeholder="Contoh: Muhammad Fauzi">
+        </div>
+
+        <div class="form-group">
+          <label>Jumlah Santri yang Dibayarkan <span class="req">*</span></label>
+          <input type="number" name="jumlah_santri" value="1" min="1" max="10">
+        </div>
+      </div>
+
+      <!-- Detail Pembayaran -->
+      <div class="card">
+        <div class="card-title">💰 Detail Pembayaran</div>
+
+        <div class="form-group">
+          <label>Nominal Pembayaran (Rp) <span class="req">*</span></label>
+          <input type="number" name="nominal" placeholder="100000" min="1">
+        </div>
+
+        <div class="form-group">
+          <label>Bulan SPP <span class="req">*</span></label>
+          <select name="bulan">
+            <option value="">-- Pilih Bulan --</option>
+            <option>Januari</option><option>Februari</option><option>Maret</option>
+            <option>April</option><option>Mei</option><option>Juni</option>
+            <option>Juli</option><option>Agustus</option><option>September</option>
+            <option>Oktober</option><option>November</option><option>Desember</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Tahun <span class="req">*</span></label>
+          <input type="number" name="tahun" id="tahunInput" min="2024" max="2030">
+        </div>
+      </div>
+
+      <!-- Metode Pembayaran -->
+      <div class="card">
+        <div class="card-title">💳 Metode Pembayaran</div>
+
+        <div class="metode-tabs">
+          <button type="button" class="tab-btn active" id="tabCash" onclick="selectMetode('cash')">
+            <span class="tab-icon">💵</span>
+            <span class="tab-label">Cash</span>
+          </button>
+          <button type="button" class="tab-btn" id="tabTransfer" onclick="selectMetode('transfer')">
+            <span class="tab-icon">🏦</span>
+            <span class="tab-label">Transfer</span>
+          </button>
+        </div>
+        <input type="hidden" name="metode" id="metodeInput" value="cash">
+
+        <!-- Transfer Box -->
+        <div class="transfer-box" id="transferBox">
+          <div class="rekening-info">
+            <span class="rek-icon">🏦</span>
+            <div class="rek-detail">
+              <div class="rek-bank">BCA – TPQ Subulunnajah</div>
+              <div class="rek-num" id="nomorRek">1234-5678-90</div>
+              <div class="rek-name">A.n. Ust. Abdullah Subulunnajah</div>
+            </div>
+            <button type="button" class="copy-btn" onclick="copyRek()">📋 Salin</button>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0">
+            <label>Upload Bukti Transfer <span class="req">*</span></label>
+            <div class="upload-area" id="uploadArea">
+              <div class="upload-icon">📎</div>
+              <div class="upload-text">
+                <strong>Klik atau seret file</strong> ke sini<br>
+                PNG, JPG, atau PDF maks. 5MB
+              </div>
+              <input type="file" name="bukti_transfer" id="fileInput"
+                     accept=".jpg,.jpeg,.png,.pdf" onchange="onFileChange(this)">
+            </div>
+            <div class="file-preview" id="filePreview"></div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn-submit" id="submitBtn" onclick="submitForm()">
+        Kirim Pembayaran 🚀
+      </button>
+    </form>
+  </div>
+
+  <!-- SUCCESS SCREEN -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-anim">✅</div>
+    <h2>Pembayaran Terkirim!</h2>
+    <p>Data pembayaran SPP kamu sudah kami terima.<br>Admin TPQ akan segera melakukan validasi.</p>
+    <div class="status-badge">⏳ Menunggu Validasi Admin</div>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px;">Jika ada pertanyaan, hubungi admin TPQ langsung.</p>
+    <br>
+    <button class="btn-back" onclick="resetForm()">Kirim Pembayaran Lagi</button>
+  </div>
+
+</div>
+
+<script>
+  // Set tahun default
+  document.getElementById('tahunInput').value = new Date().getFullYear();
+
+  function selectMetode(m) {
+    document.getElementById('metodeInput').value = m;
+    document.getElementById('tabCash').classList.toggle('active', m === 'cash');
+    document.getElementById('tabTransfer').classList.toggle('active', m === 'transfer');
+    document.getElementById('transferBox').classList.toggle('show', m === 'transfer');
+  }
+
+  function onFileChange(input) {
+    const file = input.files[0];
+    const preview = document.getElementById('filePreview');
+    const area = document.getElementById('uploadArea');
+    if (file) {
+      preview.textContent = `✅ ${file.name}`;
+      area.classList.add('has-file');
+    } else {
+      preview.textContent = '';
+      area.classList.remove('has-file');
+    }
+  }
+
+  function copyRek() {
+    const num = document.getElementById('nomorRek').textContent.replace(/-/g,'');
+    navigator.clipboard.writeText(num).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '✅ Tersalin!';
+      setTimeout(() => btn.textContent = '📋 Salin', 2000);
+    });
+  }
+
+  function showAlert(msg, type) {
+    const el = document.getElementById('alert');
+    el.textContent = msg;
+    el.className = `alert ${type} show`;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  async function submitForm() {
+    const form = document.getElementById('payForm');
+    const metode = document.getElementById('metodeInput').value;
+    const btn = document.getElementById('submitBtn');
+
+    // Validasi
+    const nama_orangtua = form.nama_orangtua.value.trim();
+    const nama_santri = form.nama_santri.value.trim();
+    const nominal = form.nominal.value;
+    const bulan = form.bulan.value;
+    const tahun = form.tahun.value;
+
+    if (!nama_orangtua) { showAlert('Nama orang tua wajib diisi!', 'error'); return; }
+    if (!nama_santri) { showAlert('Nama santri wajib diisi!', 'error'); return; }
+    if (!nominal || nominal <= 0) { showAlert('Nominal pembayaran tidak valid!', 'error'); return; }
+    if (!bulan) { showAlert('Pilih bulan SPP!', 'error'); return; }
+    if (metode === 'transfer' && !form.bukti_transfer.files.length) {
+      showAlert('Bukti transfer wajib diupload!', 'error'); return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Mengirim...';
+
+    const fd = new FormData(form);
+    fd.set('metode', metode);
+
+    try {
+      const res = await fetch('/api/pembayaran', { method: 'POST', body: fd });
+      const data = await res.json();
+
+      if (data.success) {
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('successScreen').classList.add('show');
+        document.getElementById('alert').className = 'alert';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        showAlert(data.message || 'Gagal mengirim', 'error');
+        btn.disabled = false; btn.textContent = 'Kirim Pembayaran 🚀';
+      }
+    } catch (e) {
+      showAlert('Gagal terhubung ke server. Pastikan server berjalan.', 'error');
+      btn.disabled = false; btn.textContent = 'Kirim Pembayaran 🚀';
+    }
+  }
+
+  function resetForm() {
+    document.getElementById('payForm').reset();
+    document.getElementById('tahunInput').value = new Date().getFullYear();
+    document.getElementById('metodeInput').value = 'cash';
+    document.getElementById('tabCash').classList.add('active');
+    document.getElementById('tabTransfer').classList.remove('active');
+    document.getElementById('transferBox').classList.remove('show');
+    document.getElementById('filePreview').textContent = '';
+    document.getElementById('uploadArea').classList.remove('has-file');
+    document.getElementById('formSection').style.display = 'block';
+    document.getElementById('successScreen').classList.remove('show');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Admin – TPQ Subulunnajah</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #00C896;
+    --green-dark: #00A07A;
+    --green-light: #E0FBF4;
+    --navy: #0F2744;
+    --navy2: #1a3557;
+    --yellow: #FFD166;
+    --yellow-bg: #FFFBEB;
+    --red: #FF6B6B;
+    --red-bg: #FFE8E8;
+    --blue: #3B82F6;
+    --blue-bg: #EFF6FF;
+    --purple: #8B5CF6;
+    --bg: #F0FDF9;
+    --sidebar: #0F2744;
+    --card: #FFFFFF;
+    --text: #0F2744;
+    --muted: #6B7C99;
+    --border: #E2EFF8;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg); color: var(--text);
+    display: flex; min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 240px; background: var(--sidebar);
+    min-height: 100vh; position: fixed; top: 0; left: 0;
+    z-index: 200; display: flex; flex-direction: column;
+    transition: transform 0.3s;
+  }
+
+  .sidebar-brand {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .brand-icon { font-size: 28px; margin-bottom: 6px; }
+  .brand-name { color: #fff; font-size: 14px; font-weight: 800; line-height: 1.3; }
+  .brand-sub { color: rgba(255,255,255,0.4); font-size: 11px; }
+
+  .nav-label {
+    padding: 20px 20px 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    color: rgba(255,255,255,0.3); text-transform: uppercase;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 20px; cursor: pointer;
+    border-radius: 10px; margin: 2px 10px;
+    transition: background 0.2s;
+    color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 500;
+    border: none; background: none; width: calc(100% - 20px);
+    font-family: inherit; text-align: left;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .nav-item.active { background: var(--green); color: #fff; }
+  .nav-icon { font-size: 16px; min-width: 20px; }
+
+  .sidebar-footer {
+    margin-top: auto; padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .admin-badge {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+  }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--green); display: flex; align-items: center;
+    justify-content: center; font-size: 16px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .admin-info .admin-name { color: #fff; font-size: 13px; font-weight: 600; }
+  .admin-info .admin-role { color: rgba(255,255,255,0.4); font-size: 11px; }
+
+  .btn-logout {
+    width: 100%; padding: 10px; border-radius: 10px;
+    background: rgba(255,107,107,0.15); color: #FF6B6B;
+    border: 1px solid rgba(255,107,107,0.3);
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .btn-logout:hover { background: rgba(255,107,107,0.25); }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: 240px;
+    flex: 1; padding: 24px;
+    max-width: 100%;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; gap: 12px;
+  }
+  .page-title { font-size: 22px; font-weight: 800; color: var(--navy); }
+  .page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px; margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--card); border-radius: 16px;
+    padding: 18px 20px; border: 1.5px solid var(--border);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+  .stat-value { font-size: 26px; font-weight: 800; color: var(--navy); line-height: 1; }
+  .stat-value.green { color: var(--green-dark); }
+  .stat-value.yellow { color: #D97706; }
+  .stat-icon { font-size: 24px; margin-bottom: 10px; }
+
+  /* ── CONTENT GRID ── */
+  .content-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-bottom: 16px;
+  }
+
+  .card {
+    background: var(--card); border-radius: 20px;
+    padding: 24px; border: 1.5px solid var(--border);
+  }
+
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .card-title { font-size: 15px; font-weight: 700; color: var(--navy); }
+  .card-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── SECTIONS / TABS ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── CHART ── */
+  .chart-wrap { position: relative; height: 260px; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    padding: 10px 14px; text-align: left;
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.4px;
+    border-bottom: 1.5px solid var(--border);
+  }
+  td {
+    padding: 12px 14px; border-bottom: 1px solid #F1F5F9;
+    color: var(--text); vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #FAFFFE; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-block; padding: 4px 10px;
+    border-radius: 20px; font-size: 11px; font-weight: 700;
+  }
+  .badge-menunggu { background: var(--yellow-bg); color: #B45309; border: 1px solid #FDE68A; }
+  .badge-disetujui { background: var(--green-light); color: var(--green-dark); border: 1px solid #6EE7B7; }
+  .badge-ditolak { background: var(--red-bg); color: #DC2626; border: 1px solid #FCA5A5; }
+  .badge-cash { background: #EEF2FF; color: #4338CA; border: 1px solid #C7D2FE; }
+  .badge-transfer { background: var(--blue-bg); color: #1D4ED8; border: 1px solid #BFDBFE; }
+  .badge-aktif { background: var(--green-light); color: var(--green-dark); }
+  .badge-nonaktif { background: #F1F5F9; color: var(--muted); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 7px 14px; border-radius: 8px;
+    font-family: inherit; font-size: 12px; font-weight: 700;
+    cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .btn-approve { background: var(--green-light); color: var(--green-dark); }
+  .btn-approve:hover { background: var(--green); color: #fff; }
+  .btn-reject { background: var(--red-bg); color: var(--red); }
+  .btn-reject:hover { background: var(--red); color: #fff; }
+  .btn-delete { background: var(--red-bg); color: var(--red); }
+  .btn-delete:hover { background: var(--red); color: #fff; }
+  .btn-primary {
+    background: var(--green); color: #fff; padding: 11px 20px;
+    border-radius: 10px; font-size: 13px;
+  }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-view { background: var(--blue-bg); color: var(--blue); }
+  .btn-view:hover { background: var(--blue); color: #fff; }
+
+  .action-btns { display: flex; gap: 6px; }
+
+  /* ── FORM INLINE ── */
+  .form-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px; margin-bottom: 16px;
+  }
+  .form-row.full { grid-template-columns: 1fr; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--navy); margin-bottom: 6px; display: block; }
+
+  input[type="text"], input[type="number"],
+  input[type="date"], input[type="tel"], select {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px; color: var(--text); background: #FAFFFE;
+    outline: none; transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus { border-color: var(--green); }
+
+  /* ── FILTER ROW ── */
+  .filter-row {
+    display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-row select, .filter-row input {
+    flex: 1; min-width: 120px; max-width: 180px;
+    padding: 8px 12px; font-size: 13px;
+  }
+  .filter-row .btn { padding: 8px 16px; font-size: 12px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(15,39,68,0.5); z-index: 500;
+    align-items: center; justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--card); border-radius: 20px;
+    padding: 28px; width: 100%; max-width: 480px;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .modal-title { font-size: 17px; font-weight: 700; color: var(--navy); }
+  .modal-close {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #F1F5F9; border: none; cursor: pointer;
+    font-size: 16px; display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: var(--red-bg); }
+
+  /* ── ALERT TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    padding: 14px 20px; border-radius: 12px;
+    font-size: 13px; font-weight: 600; color: #fff;
+    z-index: 999; transform: translateY(80px); opacity: 0;
+    transition: all 0.3s; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { background: var(--green-dark); }
+  .toast.error { background: var(--red); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center; padding: 48px 24px;
+    color: var(--muted);
+  }
+  .empty-state .ei { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ── HAMBURGER (mobile) ── */
+  .ham {
+    display: none; position: fixed; top: 12px; left: 12px;
+    z-index: 300; width: 40px; height: 40px;
+    background: var(--navy); border-radius: 10px; border: none;
+    font-size: 18px; cursor: pointer; color: #fff;
+    align-items: center; justify-content: center;
+  }
+
+  /* ── OVERLAY SIDEBAR (mobile) ── */
+  .sidebar-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 150;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .content-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding: 16px; padding-top: 60px; }
+    .ham { display: flex; }
+    .sidebar-overlay.show { display: block; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .card { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hamburger -->
+<button class="ham" id="hamBtn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">🕌</div>
+    <div class="brand-name">TPQ Subulunnajah</div>
+    <div class="brand-sub">Panel Admin</div>
+  </div>
+
+  <div class="nav-label">Menu Utama</div>
+  <button class="nav-item active" onclick="showSection('dashboard')" id="nav-dashboard">
+    <span class="nav-icon">📊</span> Dashboard
+  </button>
+  <button class="nav-item" onclick="showSection('validasi')" id="nav-validasi">
+    <span class="nav-icon">✅</span> Validasi Pembayaran
+  </button>
+  <button class="nav-item" onclick="showSection('pembayaran')" id="nav-pembayaran">
+    <span class="nav-icon">💰</span> Riwayat Pembayaran
+  </button>
+  <button class="nav-item" onclick="showSection('santri')" id="nav-santri">
+    <span class="nav-icon">👥</span> Data Santri
+  </button>
+
+  <div class="sidebar-footer">
+    <div class="admin-badge">
+      <div class="avatar" id="adminAvatar">A</div>
+      <div class="admin-info">
+        <div class="admin-name" id="adminName">Admin</div>
+        <div class="admin-role">Administrator</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">🚪 Keluar</button>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- ─── DASHBOARD ─── -->
+  <div class="section active" id="sec-dashboard">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Dashboard 📊</h1>
+        <p class="page-sub" id="greeting">Selamat datang!</p>
+      </div>
+      <select id="tahunFilter" onchange="loadStats()" style="width:auto;padding:8px 14px;font-size:13px">
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
+        <option value="2026">2026</option>
+      </select>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-label">Total Santri Aktif</div>
+        <div class="stat-value green" id="statSantri">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-label">Total Pemasukan</div>
+        <div class="stat-value green" id="statPemasukan">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-label">Menunggu Validasi</div>
+        <div class="stat-value yellow" id="statMenunggu">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-label">Total Transaksi</div>
+        <div class="stat-value" id="statTransaksi">–</div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card" style="grid-column: 1 / -1">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Grafik Pembayaran Bulanan</div>
+            <div class="card-sub">Jumlah transaksi yang disetujui per bulan</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartBulanan"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent validasi -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">⏳ Menunggu Validasi</div>
+          <div class="card-sub">Pembayaran yang perlu dikonfirmasi</div>
+        </div>
+        <button class="btn btn-primary" onclick="showSection('validasi')" style="font-size:12px;padding:8px 14px">
+          Lihat Semua
+        </button>
+      </div>
+      <div class="table-wrap" id="recentValidasi">
+        <div class="empty-state"><div class="ei">🎉</div><p>Semua pembayaran sudah divalidasi!</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── VALIDASI ─── -->
+  <div class="section" id="sec-validasi">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Validasi Pembayaran ✅</h1>
+        <p class="page-sub">Setujui atau tolak pembayaran transfer</p>
+      </div>
+    </div>
+    <div class="card">
+      <div id="validasiList"></div>
+    </div>
+  </div>
+
+  <!-- ─── PEMBAYARAN ─── -->
+  <div class="section" id="sec-pembayaran">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Riwayat Pembayaran 💰</h1>
+        <p class="page-sub">Semua transaksi masuk</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="filter-row">
+        <select id="filterStatus" onchange="loadPembayaran()">
+          <option value="">Semua Status</option>
+          <option value="menunggu">Menunggu</option>
+          <option value="disetujui">Disetujui</option>
+          <option value="ditolak">Ditolak</option>
+        </select>
+        <select id="filterBulan" onchange="loadPembayaran()">
+          <option value="">Semua Bulan</option>
+          <option>Januari</option><option>Februari</option><option>Maret</option>
+          <option>April</option><option>Mei</option><option>Juni</option>
+          <option>Juli</option><option>Agustus</option><option>September</option>
+          <option>Oktober</option><option>November</option><option>Desember</option>
+        </select>
+      </div>
+      <div class="table-wrap" id="pembayaranList"></div>
+    </div>
+  </div>
+
+  <!-- ─── SANTRI ─── -->
+  <div class="section" id="sec-santri">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Data Santri 👥</h1>
+        <p class="page-sub">Kelola data santri TPQ Subulunnajah</p>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('tambahSantriModal')">
+        + Tambah Santri
+      </button>
+    </div>
+    <div class="card">
+      <div class="table-wrap" id="santriList"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ─── MODAL: Tambah Santri ─── -->
+<div class="modal-overlay" id="tambahSantriModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Tambah Santri Baru</div>
+      <button class="modal-close" onclick="closeModal('tambahSantriModal')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nama Santri *</label>
+        <input type="text" id="sNama" placeholder="Nama lengkap">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Usia</label>
+        <input type="number" id="sUsia" placeholder="Tahun" min="3" max="20">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nama Wali</label>
+        <input type="text" id="sWali" placeholder="Nama orang tua/wali">
+      </div>
+      <div class="form-group">
+        <label class="form-label">No. HP Wali</label>
+        <input type="tel" id="sHp" placeholder="08xx">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Alamat</label>
+      <input type="text" id="sAlamat" placeholder="Alamat lengkap">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tanggal Masuk</label>
+      <input type="date" id="sTanggal">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-primary" style="flex:1" onclick="tambahSantri()">Simpan</button>
+      <button class="btn" style="flex:1;background:#F1F5F9;color:var(--muted);font-weight:600"
+              onclick="closeModal('tambahSantriModal')">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODAL: Detail Pembayaran ─── -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Detail Pembayaran</div>
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── Init ───────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  const res = await fetch('/api/me', { credentials: 'include' });
+  const data = await res.json();
+  if (!data.loggedIn) { window.location.href = '/login.html'; return; }
+
+  document.getElementById('adminName').textContent = data.nama;
+  document.getElementById('adminAvatar').textContent = data.nama[0].toUpperCase();
+
+  const h = new Date().getHours();
+  const salam = h < 11 ? 'Selamat pagi' : h < 15 ? 'Selamat siang' : h < 18 ? 'Selamat sore' : 'Selamat malam';
+  document.getElementById('greeting').textContent = `${salam}, ${data.nama}! 👋`;
+
+  // Set tahun filter default
+  document.getElementById('tahunFilter').value = new Date().getFullYear();
+
+  loadStats();
+  loadPembayaran();
+  loadSantri();
+  loadValidasi();
+  loadRecentValidasi();
+});
+
+let chartInstance = null;
+
+// ─── SECTION NAV ───────────────────────────────────
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`sec-${name}`).classList.add('active');
+  document.getElementById(`nav-${name}`).classList.add('active');
+  if (window.innerWidth <= 768) closeSidebar();
+
+  if (name === 'santri') loadSantri();
+  if (name === 'validasi') loadValidasi();
+  if (name === 'pembayaran') loadPembayaran();
+}
+
+// ─── SIDEBAR MOBILE ────────────────────────────────
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+// ─── TOAST ─────────────────────────────────────────
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+// ─── MODAL ─────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// ─── LOGOUT ────────────────────────────────────────
+async function doLogout() {
+  await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+  window.location.href = '/login.html';
+}
+
+// ─── STATS & CHART ─────────────────────────────────
+async function loadStats() {
+  const tahun = document.getElementById('tahunFilter').value;
+  const res = await fetch(`/api/pembayaran/stats?tahun=${tahun}`, { credentials: 'include' });
+  const data = await res.json();
+
+  const s = data.summary;
+  document.getElementById('statSantri').textContent = s.total_santri || 0;
+  document.getElementById('statPemasukan').textContent = 'Rp ' + (parseInt(s.total_pemasukan || 0)).toLocaleString('id');
+  document.getElementById('statMenunggu').textContent = s.menunggu_validasi || 0;
+  document.getElementById('statTransaksi').textContent = s.total_transaksi || 0;
+
+  // Chart
+  const bulanOrder = ['Januari','Februari','Maret','April','Mei','Juni',
+                      'Juli','Agustus','September','Oktober','November','Desember'];
+  const bulanMap = {};
+  data.bulanan.forEach(b => bulanMap[b.bulan] = b);
+
+  const labels = bulanOrder.map(b => b.slice(0,3));
+  const lunas = bulanOrder.map(b => bulanMap[b] ? parseInt(bulanMap[b].lunas) : 0);
+  const menunggu = bulanOrder.map(b => bulanMap[b] ? parseInt(bulanMap[b].menunggu) : 0);
+
+  if (chartInstance) chartInstance.destroy();
+  const ctx = document.getElementById('chartBulanan').getContext('2d');
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Disetujui',
+          data: lunas,
+          backgroundColor: '#00C896CC',
+          borderRadius: 8, borderSkipped: false,
+        },
+        {
+          label: 'Menunggu',
+          data: menunggu,
+          backgroundColor: '#FFD16699',
+          borderRadius: 8, borderSkipped: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 12 }, boxWidth: 12 } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11 } } },
+        y: {
+          beginAtZero: true, grid: { color: '#F1F5F9' },
+          ticks: { stepSize: 1, font: { family: 'Plus Jakarta Sans', size: 11 } }
+        }
+      }
+    }
+  });
+}
+
+// ─── VALIDASI ──────────────────────────────────────
+async function loadValidasi() {
+  const res = await fetch('/api/pembayaran?status=menunggu', { credentials: 'include' });
+  const data = await res.json();
+  const container = document.getElementById('validasiList');
+
+  if (!data.data.length) {
+    container.innerHTML = `<div class="empty-state"><div class="ei">🎉</div><p>Tidak ada pembayaran yang perlu divalidasi!</p></div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr>
+      <th>Tanggal</th><th>Orang Tua</th><th>Santri</th><th>Nominal</th>
+      <th>Bulan</th><th>Metode</th><th>Bukti</th><th>Aksi</th>
+    </tr></thead>
+    <tbody>
+    ${data.data.map(p => `
+      <tr>
+        <td style="color:var(--muted);font-size:12px">${formatDate(p.created_at)}</td>
+        <td><strong>${p.nama_orangtua}</strong></td>
+        <td>${p.nama_santri} ${p.jumlah_santri > 1 ? `<span class="badge" style="background:#EEF2FF;color:#4338CA">${p.jumlah_santri} santri</span>` : ''}</td>
+        <td style="font-weight:700;color:var(--green-dark)">Rp ${parseInt(p.nominal).toLocaleString('id')}</td>
+        <td>${p.bulan} ${p.tahun}</td>
+        <td><span class="badge badge-${p.metode}">${p.metode}</span></td>
+        <td>${p.bukti_transfer ? `<a href="${p.bukti_transfer}" target="_blank" class="btn btn-view btn" style="font-size:11px;padding:5px 10px">Lihat</a>` : '–'}</td>
+        <td><div class="action-btns">
+          <button class="btn btn-approve" onclick="validasi(${p.id},'disetujui')">✓ Setuju</button>
+          <button class="btn btn-reject" onclick="validasi(${p.id},'ditolak')">✗ Tolak</button>
+        </div></td>
+      </tr>
+    `).join('')}
+    </tbody></table></div>`;
+}
+
+async function loadRecentValidasi() {
+  const res = await fetch('/api/pembayaran?status=menunggu', { credentials: 'include' });
+  const data = await res.json();
+  const container = document.getElementById('recentValidasi');
+
+  if (!data.data.length) {
+    container.innerHTML = `<div class="empty-state"><div class="ei">🎉</div><p>Semua pembayaran sudah divalidasi!</p></div>`;
+    return;
+  }
+
+  const sliced = data.data.slice(0, 5);
+  container.innerHTML = `<table>
+    <thead><tr><th>Orang Tua</th><th>Santri</th><th>Nominal</th><th>Metode</th><th>Aksi</th></tr></thead>
+    <tbody>
+    ${sliced.map(p => `<tr>
+      <td><strong>${p.nama_orangtua}</strong></td>
+      <td>${p.nama_santri}</td>
+      <td style="font-weight:700;color:var(--green-dark)">Rp ${parseInt(p.nominal).toLocaleString('id')}</td>
+      <td><span class="badge badge-${p.metode}">${p.metode}</span></td>
+      <td><div class="action-btns">
+        <button class="btn btn-approve" onclick="validasi(${p.id},'disetujui')">✓</button>
+        <button class="btn btn-reject" onclick="validasi(${p.id},'ditolak')">✗</button>
+      </div></td>
+    </tr>`).join('')}
+    </tbody></table>`;
+}
+
+async function validasi(id, status) {
+  const label = status === 'disetujui' ? 'menyetujui' : 'menolak';
+  if (!confirm(`Yakin ingin ${label} pembayaran ini?`)) return;
+
+  const res = await fetch(`/api/pembayaran/${id}/validasi`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+    credentials: 'include'
+  });
+  const data = await res.json();
+  if (data.success) {
+    showToast(`Pembayaran berhasil ${status}! ✅`);
+    loadValidasi(); loadRecentValidasi(); loadStats();
+  } else {
+    showToast(data.message, 'error');
+  }
+}
+
+// ─── PEMBAYARAN ────────────────────────────────────
+async function loadPembayaran() {
+  const status = document.getElementById('filterStatus').value;
+  const bulan = document.getElementById('filterBulan').value;
+  let url = '/api/pembayaran?';
+  if (status) url += `status=${status}&`;
+  if (bulan) url += `bulan=${bulan}`;
+
+  const res = await fetch(url, { credentials: 'include' });
+  const data = await res.json();
+  const container = document.getElementById('pembayaranList');
+
+  if (!data.data.length) {
+    container.innerHTML = `<div class="empty-state"><div class="ei">📭</div><p>Tidak ada data pembayaran</p></div>`;
+    return;
+  }
+
+  container.innerHTML = `<table>
+    <thead><tr>
+      <th>Tanggal</th><th>Orang Tua</th><th>Santri</th>
+      <th>Nominal</th><th>Bulan</th><th>Metode</th><th>Status</th><th>Bukti</th>
+    </tr></thead>
+    <tbody>
+    ${data.data.map(p => `<tr>
+      <td style="color:var(--muted);font-size:12px">${formatDate(p.created_at)}</td>
+      <td>${p.nama_orangtua}</td>
+      <td>${p.nama_santri}</td>
+      <td style="font-weight:700">Rp ${parseInt(p.nominal).toLocaleString('id')}</td>
+      <td>${p.bulan} ${p.tahun}</td>
+      <td><span class="badge badge-${p.metode}">${p.metode}</span></td>
+      <td><span class="badge badge-${p.status}">${p.status}</span></td>
+      <td>${p.bukti_transfer ? `<a href="${p.bukti_transfer}" target="_blank" class="btn btn-view btn" style="font-size:11px;padding:5px 10px">Lihat</a>` : '–'}</td>
+    </tr>`).join('')}
+    </tbody></table>`;
+}
+
+// ─── SANTRI ────────────────────────────────────────
+async function loadSantri() {
+  const res = await fetch('/api/santri', { credentials: 'include' });
+  const data = await res.json();
+  const container = document.getElementById('santriList');
+
+  if (!data.data.length) {
+    container.innerHTML = `<div class="empty-state"><div class="ei">👥</div><p>Belum ada data santri</p></div>`;
+    return;
+  }
+
+  container.innerHTML = `<table>
+    <thead><tr>
+      <th>#</th><th>Nama Santri</th><th>Usia</th><th>Nama Wali</th>
+      <th>No. HP</th><th>Tgl Masuk</th><th>Status</th><th>Aksi</th>
+    </tr></thead>
+    <tbody>
+    ${data.data.map((s, i) => `<tr>
+      <td style="color:var(--muted)">${i + 1}</td>
+      <td><strong>${s.nama}</strong></td>
+      <td>${s.usia ? s.usia + ' th' : '–'}</td>
+      <td>${s.nama_wali || '–'}</td>
+      <td style="font-size:12px">${s.no_hp || '–'}</td>
+      <td style="font-size:12px;color:var(--muted)">${s.tanggal_masuk ? formatDate(s.tanggal_masuk) : '–'}</td>
+      <td><span class="badge badge-${s.status}">${s.status}</span></td>
+      <td><button class="btn btn-delete" onclick="hapusSantri(${s.id}, '${s.nama}')">🗑 Hapus</button></td>
+    </tr>`).join('')}
+    </tbody></table>`;
+}
+
+async function tambahSantri() {
+  const nama = document.getElementById('sNama').value.trim();
+  if (!nama) { showToast('Nama santri wajib diisi!', 'error'); return; }
+
+  const body = {
+    nama,
+    usia: document.getElementById('sUsia').value,
+    nama_wali: document.getElementById('sWali').value,
+    no_hp: document.getElementById('sHp').value,
+    alamat: document.getElementById('sAlamat').value,
+    tanggal_masuk: document.getElementById('sTanggal').value
+  };
+
+  const res = await fetch('/api/santri', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    credentials: 'include'
+  });
+  const data = await res.json();
+  if (data.success) {
+    showToast('Santri berhasil ditambahkan! 🎉');
+    closeModal('tambahSantriModal');
+    document.querySelectorAll('#tambahSantriModal input').forEach(i => i.value = '');
+    loadSantri(); loadStats();
+  } else {
+    showToast(data.message, 'error');
+  }
+}
+
+async function hapusSantri(id, nama) {
+  if (!confirm(`Hapus santri "${nama}"? Tindakan ini tidak dapat diurungkan.`)) return;
+  const res = await fetch(`/api/santri/${id}`, { method: 'DELETE', credentials: 'include' });
+  const data = await res.json();
+  if (data.success) { showToast('Santri berhasil dihapus'); loadSantri(); loadStats(); }
+  else showToast(data.message, 'error');
+}
+
+// ─── HELPERS ───────────────────────────────────────
+function formatDate(d) {
+  if (!d) return '–';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+</script>
+</body>
+</html>
