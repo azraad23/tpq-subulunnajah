@@ -163,4 +163,122 @@
     color: var(--muted);
   }
   .back-link a {
-    color: var(-
+    color: var(--green-dark);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .back-link a:hover { text-decoration: underline; }
+
+  .hint {
+    margin-top: 20px;
+    padding: 12px 16px;
+    background: #FFFBEB;
+    border-radius: 10px;
+    border: 1px solid #FDE68A;
+    font-size: 12px;
+    color: #92400E;
+  }
+  .hint strong { display: block; margin-bottom: 4px; }
+
+  @media (max-width: 480px) {
+    .card { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="logo-area">
+    <div class="logo-icon">🕌</div>
+    <h1>TPQ Subulunnajah</h1>
+    <p>Sistem Manajemen Santri & SPP</p>
+  </div>
+
+  <div class="card">
+    <h2>Login Admin</h2>
+    <p class="subtitle">Masukkan kredensial admin untuk melanjutkan</p>
+
+    <div class="alert" id="alert"></div>
+
+    <div class="form-group">
+      <label for="email">Email Admin</label>
+      <input type="email" id="email" placeholder="admin@tpq.com" autocomplete="username">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <div class="input-wrap">
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+        <button type="button" class="toggle-pw" onclick="togglePw()" id="eyeBtn">👁</button>
+      </div>
+    </div>
+
+    <button class="btn-login" id="loginBtn" onclick="doLogin()">Masuk Dashboard</button>
+
+    <div class="hint">
+      <strong>💡 Akun Default:</strong>
+      Email: admin@tpq.com &nbsp;|&nbsp; Password: admin123
+    </div>
+  </div>
+
+  <div class="back-link">
+    <a href="/index.html">← Kembali ke Form Pembayaran</a>
+  </div>
+</div>
+
+<script>
+  // Cek sudah login
+  fetch('/api/me').then(r => r.json()).then(d => {
+    if (d.loggedIn) window.location.href = '/admin.html';
+  });
+
+  function togglePw() {
+    const pw = document.getElementById('password');
+    const btn = document.getElementById('eyeBtn');
+    if (pw.type === 'password') { pw.type = 'text'; btn.textContent = '🙈'; }
+    else { pw.type = 'password'; btn.textContent = '👁'; }
+  }
+
+  function showAlert(msg, type) {
+    const el = document.getElementById('alert');
+    el.textContent = msg;
+    el.className = `alert ${type} show`;
+  }
+
+  async function doLogin() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('loginBtn');
+
+    if (!email || !password) { showAlert('Email dan password wajib diisi!', 'error'); return; }
+
+    btn.disabled = true; btn.textContent = 'Memproses...';
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include'
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        showAlert(`Selamat datang, ${data.nama}! 🎉`, 'success');
+        setTimeout(() => window.location.href = '/admin.html', 1000);
+      } else {
+        showAlert(data.message || 'Login gagal', 'error');
+        btn.disabled = false; btn.textContent = 'Masuk Dashboard';
+      }
+    } catch (e) {
+      showAlert('Gagal terhubung ke server', 'error');
+      btn.disabled = false; btn.textContent = 'Masuk Dashboard';
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+</script>
+</body>
+</html>
