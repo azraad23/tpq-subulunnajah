@@ -49,10 +49,11 @@ const upload = multer({
 // ─── Database Connection ──────────────────────────────────
 // ⚠️  SESUAIKAN KONFIGURASI INI DENGAN DATABASE ANDA
 const dbConfig = {
-  host: 'localhost',
-  user: 'root',
-  password: '',          // Ganti dengan password MySQL Anda
-  database: 'tpq_subulunnajah',
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: parseInt(process.env.MYSQLPORT || '3306'),
   waitForConnections: true,
   connectionLimit: 10
 };
@@ -256,3 +257,4 @@ initDB().then(() => {
     console.log(`👨‍👩‍👧 Form Orang Tua: http://localhost:${PORT}/index.html\n`);
   });
 });
+
