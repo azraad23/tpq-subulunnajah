@@ -48,7 +48,7 @@ const upload = multer({
 
 // ─── Database Connection ──────────────────────────────────
 // ⚠️  SESUAIKAN KONFIGURASI INI DENGAN DATABASE ANDA
-const dbConfig = { uri: process.env.MYSQL_URL, waitForConnections: true, connectionLimit: 10 };
+const dbConfig = process.env.MYSQL_URL || process.env.MYSQL_PUBLIC_URL;
 
 let pool;
 async function initDB() {
@@ -249,5 +249,7 @@ initDB().then(() => {
     console.log(`👨‍👩‍👧 Form Orang Tua: http://localhost:${PORT}/index.html\n`);
   });
 });
+
+
 
 
