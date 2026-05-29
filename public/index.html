@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bayar SPP – TPQ Subulunnajah</title>
+<title>Bayar SPP â€“ TPQ Subulunnajah</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,7 +31,7 @@
                       radial-gradient(circle at 90% 90%, rgba(14,165,160,0.08) 0%, transparent 45%);
   }
 
-  /* ── HEADER ── */
+  /* â”€â”€ HEADER â”€â”€ */
   .header {
     background: var(--navy);
     padding: 16px 20px;
@@ -50,7 +50,7 @@
   }
   .admin-link:hover { background: rgba(0,200,150,0.1); }
 
-  /* ── DEADLINE BANNER ── */
+  /* â”€â”€ DEADLINE BANNER â”€â”€ */
   .deadline-banner {
     background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
     padding: 14px 20px;
@@ -60,7 +60,7 @@
   .deadline-banner p { color: #fff; font-size: 13px; font-weight: 600; line-height: 1.4; }
   .deadline-banner p span { font-size: 12px; font-weight: 400; opacity: 0.85; display: block; }
 
-  /* ── MAIN ── */
+  /* â”€â”€ MAIN â”€â”€ */
   .main { max-width: 600px; margin: 0 auto; padding: 24px 16px 48px; }
 
   .section-title {
@@ -118,7 +118,7 @@
     padding-right: 40px;
   }
 
-  /* ── METODE TABS ── */
+  /* â”€â”€ METODE TABS â”€â”€ */
   .metode-tabs {
     display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
     margin-bottom: 4px;
@@ -137,7 +137,7 @@
   }
   .tab-btn.active .tab-label { color: var(--green-dark); }
 
-  /* ── TRANSFER BOX ── */
+  /* â”€â”€ TRANSFER BOX â”€â”€ */
   .transfer-box {
     display: none;
     background: #FFFBEB;
@@ -168,7 +168,7 @@
   }
   .copy-btn:hover { background: #1a3a5c; }
 
-  /* ── UPLOAD ── */
+  /* â”€â”€ UPLOAD â”€â”€ */
   .upload-area {
     border: 2px dashed var(--border); border-radius: 12px;
     padding: 24px; text-align: center; cursor: pointer;
@@ -189,7 +189,7 @@
     color: var(--green-dark); font-weight: 600;
   }
 
-  /* ── SUBMIT BTN ── */
+  /* â”€â”€ SUBMIT BTN â”€â”€ */
   .btn-submit {
     width: 100%; padding: 17px;
     background: var(--green); color: #fff; border: none;
@@ -204,7 +204,7 @@
   .btn-submit:active { transform: scale(0.98); }
   .btn-submit:disabled { background: #B2E8DA; box-shadow: none; cursor: not-allowed; }
 
-  /* ── ALERTS ── */
+  /* â”€â”€ ALERTS â”€â”€ */
   .alert {
     padding: 14px 18px; border-radius: 12px;
     font-size: 14px; font-weight: 500; margin-bottom: 20px; display: none;
@@ -213,7 +213,7 @@
   .alert.error { background: #FFE8E8; color: #D92D20; border: 1.5px solid #FCA5A5; }
   .alert.success { background: var(--green-light); color: var(--green-dark); border: 1.5px solid var(--green); }
 
-  /* ── SUCCESS SCREEN ── */
+  /* â”€â”€ SUCCESS SCREEN â”€â”€ */
   .success-screen {
     display: none; text-align: center; padding: 40px 24px;
   }
@@ -251,23 +251,23 @@
 
 <div class="header">
   <div class="header-brand">
-    <span class="header-icon">🕌</span>
+    <span class="header-icon">ðŸ•Œ</span>
     <div>
       <div class="header-title">TPQ Subulunnajah</div>
       <div class="header-sub">Sistem Pembayaran SPP</div>
     </div>
   </div>
-  <a href="/login.html" class="admin-link">🔐 Admin</a>
+  <a href="/login.html" class="admin-link">ðŸ” Admin</a>
 </div>
 
 <div class="deadline-banner">
-  <span class="icon">⏰</span>
+  <span class="icon">â°</span>
   <p>Batas pembayaran SPP: <strong>tanggal 12 setiap bulan</strong>
   <span>Pastikan pembayaran sebelum tanggal tersebut ya!</span></p>
 </div>
 
 <div class="main">
-  <h1 class="section-title">Form Pembayaran SPP 📋</h1>
+  <h1 class="section-title">Form Pembayaran SPP ðŸ“‹</h1>
   <p class="section-sub">Isi form dengan lengkap dan benar. Pembayaran akan divalidasi oleh admin TPQ.</p>
 
   <div class="alert" id="alert"></div>
@@ -278,7 +278,7 @@
 
       <!-- Data Orang Tua & Santri -->
       <div class="card">
-        <div class="card-title">👤 Data Orang Tua & Santri</div>
+        <div class="card-title">ðŸ‘¤ Data Orang Tua & Santri</div>
 
         <div class="form-group">
           <label>Nama Orang Tua <span class="req">*</span></label>
@@ -298,7 +298,7 @@
 
       <!-- Detail Pembayaran -->
       <div class="card">
-        <div class="card-title">💰 Detail Pembayaran</div>
+        <div class="card-title">ðŸ’° Detail Pembayaran</div>
 
         <div class="form-group">
           <label>Nominal Pembayaran (Rp) <span class="req">*</span></label>
@@ -324,15 +324,15 @@
 
       <!-- Metode Pembayaran -->
       <div class="card">
-        <div class="card-title">💳 Metode Pembayaran</div>
+        <div class="card-title">ðŸ’³ Metode Pembayaran</div>
 
         <div class="metode-tabs">
           <button type="button" class="tab-btn active" id="tabCash" onclick="selectMetode('cash')">
-            <span class="tab-icon">💵</span>
+            <span class="tab-icon">ðŸ’µ</span>
             <span class="tab-label">Cash</span>
           </button>
           <button type="button" class="tab-btn" id="tabTransfer" onclick="selectMetode('transfer')">
-            <span class="tab-icon">🏦</span>
+            <span class="tab-icon">ðŸ¦</span>
             <span class="tab-label">Transfer</span>
           </button>
         </div>
@@ -341,19 +341,19 @@
         <!-- Transfer Box -->
         <div class="transfer-box" id="transferBox">
           <div class="rekening-info">
-            <span class="rek-icon">🏦</span>
+            <span class="rek-icon">ðŸ¦</span>
             <div class="rek-detail">
-              <div class="rek-bank">Bank BRI � TPQ Subulunnajah</div>
+              <div class="rek-bank">Bank BRI – TPQ Subulunnajah</div>
               <div class="rek-num" id="nomorRek">210601014971504</div>
               <div class="rek-name">A.n. Siti Habibah</div>
             </div>
-            <button type="button" class="copy-btn" onclick="copyRek()">📋 Salin</button>
+            <button type="button" class="copy-btn" onclick="copyRek()">ðŸ“‹ Salin</button>
           </div>
 
           <div class="form-group" style="margin-bottom:0">
             <label>Upload Bukti Transfer <span class="req">*</span></label>
             <div class="upload-area" id="uploadArea">
-              <div class="upload-icon">📎</div>
+              <div class="upload-icon">ðŸ“Ž</div>
               <div class="upload-text">
                 <strong>Klik atau seret file</strong> ke sini<br>
                 PNG, JPG, atau PDF maks. 5MB
@@ -367,17 +367,17 @@
       </div>
 
       <button type="button" class="btn-submit" id="submitBtn" onclick="submitForm()">
-        Kirim Pembayaran 🚀
+        Kirim Pembayaran ðŸš€
       </button>
     </form>
   </div>
 
   <!-- SUCCESS SCREEN -->
   <div class="success-screen" id="successScreen">
-    <div class="success-anim">✅</div>
+    <div class="success-anim">âœ…</div>
     <h2>Pembayaran Terkirim!</h2>
     <p>Data pembayaran SPP kamu sudah kami terima.<br>Admin TPQ akan segera melakukan validasi.</p>
-    <div class="status-badge">⏳ Menunggu Validasi Admin</div>
+    <div class="status-badge">â³ Menunggu Validasi Admin</div>
     <p style="font-size:12px;color:var(--muted);margin-top:8px;">Jika ada pertanyaan, hubungi admin TPQ langsung.</p>
     <br>
     <button class="btn-back" onclick="resetForm()">Kirim Pembayaran Lagi</button>
@@ -401,7 +401,7 @@
     const preview = document.getElementById('filePreview');
     const area = document.getElementById('uploadArea');
     if (file) {
-      preview.textContent = `✅ ${file.name}`;
+      preview.textContent = `âœ… ${file.name}`;
       area.classList.add('has-file');
     } else {
       preview.textContent = '';
@@ -413,8 +413,8 @@
     const num = document.getElementById('nomorRek').textContent.replace(/-/g,'');
     navigator.clipboard.writeText(num).then(() => {
       const btn = document.querySelector('.copy-btn');
-      btn.textContent = '✅ Tersalin!';
-      setTimeout(() => btn.textContent = '📋 Salin', 2000);
+      btn.textContent = 'âœ… Tersalin!';
+      setTimeout(() => btn.textContent = 'ðŸ“‹ Salin', 2000);
     });
   }
 
@@ -461,11 +461,11 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         showAlert(data.message || 'Gagal mengirim', 'error');
-        btn.disabled = false; btn.textContent = 'Kirim Pembayaran 🚀';
+        btn.disabled = false; btn.textContent = 'Kirim Pembayaran ðŸš€';
       }
     } catch (e) {
       showAlert('Gagal terhubung ke server. Pastikan server berjalan.', 'error');
-      btn.disabled = false; btn.textContent = 'Kirim Pembayaran 🚀';
+      btn.disabled = false; btn.textContent = 'Kirim Pembayaran ðŸš€';
     }
   }
 
@@ -482,8 +482,10 @@
     document.getElementById('successScreen').classList.remove('show');
   }
 </script>
+<footer style="text-align:center !important; padding:15px !important; background:#1a1a2e !important; color:#fff !important; font-size:14px !important; display:block !important; width:100% !important;">&copy; 2026 SUBULUNNAJAH. All Rights Reserved.</footer>
 </body>
 </html>
+
 
 
 

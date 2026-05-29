@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login Admin – TPQ Subulunnajah</title>
+<title>Login Admin â€“ TPQ Subulunnajah</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -189,7 +189,7 @@
 
 <div class="login-wrap">
   <div class="logo-area">
-    <div class="logo-icon">🕌</div>
+    <div class="logo-icon">ðŸ•Œ</div>
     <h1>TPQ Subulunnajah</h1>
     <p>Sistem Manajemen Santri & SPP</p>
   </div>
@@ -208,21 +208,21 @@
     <div class="form-group">
       <label for="password">Password</label>
       <div class="input-wrap">
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
-        <button type="button" class="toggle-pw" onclick="togglePw()" id="eyeBtn">👁</button>
+        <input type="password" id="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password">
+        <button type="button" class="toggle-pw" onclick="togglePw()" id="eyeBtn">ðŸ‘</button>
       </div>
     </div>
 
     <button class="btn-login" id="loginBtn" onclick="doLogin()">Masuk Dashboard</button>
 
     <div class="hint">
-      <strong>💡 Akun Default:</strong>
+      <strong>ðŸ’¡ Akun Default:</strong>
       Email: - &nbsp;|&nbsp; Password: -
     </div>
   </div>
 
   <div class="back-link">
-    <a href="/index.html">← Kembali ke Form Pembayaran</a>
+    <a href="/index.html">â† Kembali ke Form Pembayaran</a>
   </div>
 </div>
 
@@ -235,8 +235,8 @@
   function togglePw() {
     const pw = document.getElementById('password');
     const btn = document.getElementById('eyeBtn');
-    if (pw.type === 'password') { pw.type = 'text'; btn.textContent = '🙈'; }
-    else { pw.type = 'password'; btn.textContent = '👁'; }
+    if (pw.type === 'password') { pw.type = 'text'; btn.textContent = 'ðŸ™ˆ'; }
+    else { pw.type = 'password'; btn.textContent = 'ðŸ‘'; }
   }
 
   function showAlert(msg, type) {
@@ -264,7 +264,7 @@
       const data = await res.json();
 
       if (data.success) {
-        showAlert(`Selamat datang, ${data.nama}! 🎉`, 'success');
+        showAlert(`Selamat datang, ${data.nama}! ðŸŽ‰`, 'success');
         setTimeout(() => window.location.href = '/admin.html', 1000);
       } else {
         showAlert(data.message || 'Login gagal', 'error');
@@ -280,8 +280,10 @@
     if (e.key === 'Enter') doLogin();
   });
 </script>
+<footer style="text-align:center !important; padding:15px !important; background:#1a1a2e !important; color:#fff !important; font-size:14px !important; display:block !important; width:100% !important;">&copy; 2026 SUBULUNNAJAH. All Rights Reserved.</footer>
 </body>
 </html>
+
 
 
 
