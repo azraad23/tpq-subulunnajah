@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
@@ -242,7 +242,31 @@ app.patch('/api/pembayaran/:id/validasi', requireAdmin, async (req, res) => {
 // START SERVER
 // ═══════════════════════════════════════════════════════════
 initDB().then(() => {
-  app.listen(PORT, () => {
+  
+// GET /api/spp/status - Status SPP santri per bulan
+app.get('/api/spp/status', requireAdmin, async (req, res) => {
+  try {
+    const bulan = req.query.bulan || new Date().getMonth() + 1;
+    const tahun = req.query.tahun || new Date().getFullYear();
+    const [santri] = await pool.query('SELECT id, nama, nama_wali, no_hp FROM santri WHERE status = "aktif" ORDER BY nama ASC');
+    const [bayar] = await pool.query(
+      'SELECT nama_santri, status FROM pembayaran WHERE bulan = ? AND tahun = ? AND status = "disetujui"',
+      [bulan, tahun]
+    );
+    const sudahBayar = bayar.map(b => b.nama_santri.toLowerCase().trim());
+    const result = santri.map(s => ({
+      id: s.id,
+      nama: s.nama,
+      nama_wali: s.nama_wali,
+      no_hp: s.no_hp,
+      status: sudahBayar.includes(s.nama.toLowerCase().trim()) ? 'lunas' : 'belum'
+    }));
+    res.json({ success: true, data: result, bulan, tahun });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+app.listen(PORT, () => {
     console.log(`\n🕌 TPQ Subulunnajah Server berjalan!`);
     console.log(`🌐 Buka browser: http://localhost:${PORT}`);
     console.log(`🔐 Login Admin:  http://localhost:${PORT}/login.html`);
