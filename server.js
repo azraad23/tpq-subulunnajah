@@ -1,8 +1,4 @@
-/**
- * © 2026 SUBULUNNAJAH - All Rights Reserved
- * Project: TPQ Subulunnajah
- */
-const express = require('express');
+﻿const express = require('express');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
@@ -12,19 +8,14 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
-// ─── Middleware ─────────────────────────────────────────────────────────────
+// ─── Middleware ───────────────────────────────────────────
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname)));
-
-const uploadDir = path.join(__dirname, 'public', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-app.use('/uploads', express.static(uploadDir));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 app.use(session({
   secret: 'tpq-subulunnajah-secret-2025',
@@ -33,9 +24,11 @@ app.use(session({
   cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// ─── Multer (Upload Bukti Transfer) ─────────────────────────────────────────
+// ─── Multer (Upload Bukti Transfer) ──────────────────────
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    const uploadDir = path.join(__dirname, 'public/uploads');
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
@@ -43,7 +36,6 @@ const storage = multer.diskStorage({
     cb(null, `bukti-${Date.now()}${ext}`);
   }
 });
-
 const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -54,16 +46,9 @@ const upload = multer({
   }
 });
 
-// ─── Database Connection ────────────────────────────────────────────────────
-const dbConfig = {
-  host: process.env.MYSQLHOST || 'localhost',
-  user: process.env.MYSQLUSER || 'root',
-  password: process.env.MYSQLPASSWORD || '',
-  database: process.env.MYSQLDATABASE || 'railway',
-  port: parseInt(process.env.MYSQLPORT || '3306'),
-  waitForConnections: true,
-  connectionLimit: 10
-};
+// ─── Database Connection ──────────────────────────────────
+// ⚠️  SESUAIKAN KONFIGURASI INI DENGAN DATABASE ANDA
+const dbConfig = process.env.MYSQL_URL || process.env.MYSQL_PUBLIC_URL;
 
 let pool;
 async function initDB() {
@@ -73,21 +58,22 @@ async function initDB() {
     console.log('✅ Database terhubung');
   } catch (err) {
     console.error('❌ Gagal koneksi database:', err.message);
-    console.log('⚠️ Pastikan MySQL berjalan dan database sudah dibuat via database.sql');
+    console.log('⚠️  Pastikan MySQL berjalan dan database sudah dibuat via database.sql');
     process.exit(1);
   }
 }
 
-// ─── Middleware Auth ────────────────────────────────────────────────────────
+// ─── Middleware Auth ──────────────────────────────────────
 function requireAdmin(req, res, next) {
   if (req.session && req.session.adminId) return next();
   res.status(401).json({ success: false, message: 'Unauthorized' });
 }
 
-// =============================================================================
+// ═══════════════════════════════════════════════════════════
 // AUTH ROUTES
-// =============================================================================
+// ═══════════════════════════════════════════════════════════
 
+// POST /api/login
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -103,11 +89,13 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// POST /api/logout
 app.post('/api/logout', (req, res) => {
   req.session.destroy();
   res.json({ success: true });
 });
 
+// GET /api/me
 app.get('/api/me', (req, res) => {
   if (req.session.adminId) {
     res.json({ loggedIn: true, nama: req.session.adminNama });
@@ -116,10 +104,11 @@ app.get('/api/me', (req, res) => {
   }
 });
 
-// =============================================================================
+// ═══════════════════════════════════════════════════════════
 // SANTRI ROUTES
-// =============================================================================
+// ═══════════════════════════════════════════════════════════
 
+// GET /api/santri
 app.get('/api/santri', requireAdmin, async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM santri ORDER BY nama ASC');
@@ -129,6 +118,7 @@ app.get('/api/santri', requireAdmin, async (req, res) => {
   }
 });
 
+// GET /api/santri/list (public - untuk dropdown form)
 app.get('/api/santri/list', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT id, nama FROM santri WHERE status = "aktif" ORDER BY nama ASC');
@@ -138,6 +128,7 @@ app.get('/api/santri/list', async (req, res) => {
   }
 });
 
+// POST /api/santri
 app.post('/api/santri', requireAdmin, async (req, res) => {
   const { nama, usia, alamat, nama_wali, no_hp, tanggal_masuk } = req.body;
   if (!nama) return res.json({ success: false, message: 'Nama santri wajib diisi' });
@@ -152,6 +143,7 @@ app.post('/api/santri', requireAdmin, async (req, res) => {
   }
 });
 
+// DELETE /api/santri/:id
 app.delete('/api/santri/:id', requireAdmin, async (req, res) => {
   try {
     await pool.query('DELETE FROM santri WHERE id = ?', [req.params.id]);
@@ -161,10 +153,11 @@ app.delete('/api/santri/:id', requireAdmin, async (req, res) => {
   }
 });
 
-// =============================================================================
+// ═══════════════════════════════════════════════════════════
 // PEMBAYARAN ROUTES
-// =============================================================================
+// ═══════════════════════════════════════════════════════════
 
+// GET /api/pembayaran (admin)
 app.get('/api/pembayaran', requireAdmin, async (req, res) => {
   try {
     const { status, bulan, tahun } = req.query;
@@ -181,6 +174,7 @@ app.get('/api/pembayaran', requireAdmin, async (req, res) => {
   }
 });
 
+// GET /api/pembayaran/stats (grafik dashboard)
 app.get('/api/pembayaran/stats', requireAdmin, async (req, res) => {
   try {
     const tahun = req.query.tahun || new Date().getFullYear();
@@ -205,6 +199,7 @@ app.get('/api/pembayaran/stats', requireAdmin, async (req, res) => {
   }
 });
 
+// POST /api/pembayaran (public - form orang tua)
 app.post('/api/pembayaran', upload.single('bukti_transfer'), async (req, res) => {
   const { nama_orangtua, nama_santri, jumlah_santri, nominal, metode, bulan, tahun } = req.body;
   if (!nama_orangtua || !nama_santri || !nominal || !metode || !bulan) {
@@ -226,6 +221,7 @@ app.post('/api/pembayaran', upload.single('bukti_transfer'), async (req, res) =>
   }
 });
 
+// PATCH /api/pembayaran/:id/validasi (admin)
 app.patch('/api/pembayaran/:id/validasi', requireAdmin, async (req, res) => {
   const { status, catatan_admin } = req.body;
   if (!['disetujui', 'ditolak'].includes(status)) {
@@ -242,14 +238,42 @@ app.patch('/api/pembayaran/:id/validasi', requireAdmin, async (req, res) => {
   }
 });
 
-// =============================================================================
+// ═══════════════════════════════════════════════════════════
 // START SERVER
-// =============================================================================
-async function startServer() {
-  await initDB();
-  app.listen(PORT, () => {
-    console.log(`\n🕌 TPQ Subulunnajah Server berjalan di Port: ${PORT}`);
+// ═══════════════════════════════════════════════════════════
+initDB().then(() => {
+  
+// GET /api/spp/status - Status SPP santri per bulan
+app.get('/api/spp/status', requireAdmin, async (req, res) => {
+  try {
+    const bulan = req.query.bulan || new Date().getMonth() + 1;
+    const tahun = req.query.tahun || new Date().getFullYear();
+    const [santri] = await pool.query('SELECT id, nama, nama_wali, no_hp FROM santri WHERE status = "aktif" ORDER BY nama ASC');
+    const [bayar] = await pool.query(
+      'SELECT nama_santri, status FROM pembayaran WHERE bulan = ? AND tahun = ? AND status = "disetujui"',
+      [bulan, tahun]
+    );
+    const sudahBayar = bayar.map(b => b.nama_santri.toLowerCase().trim());
+    const result = santri.map(s => ({
+      id: s.id,
+      nama: s.nama,
+      nama_wali: s.nama_wali,
+      no_hp: s.no_hp,
+      status: sudahBayar.includes(s.nama.toLowerCase().trim()) ? 'lunas' : 'belum'
+    }));
+    res.json({ success: true, data: result, bulan, tahun });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+app.listen(PORT, () => {
+    console.log(`\n🕌 TPQ Subulunnajah Server berjalan!`);
+    console.log(`🌐 Buka browser: http://localhost:${PORT}`);
+    console.log(`🔐 Login Admin:  http://localhost:${PORT}/login.html`);
+    console.log(`👨‍👩‍👧 Form Orang Tua: http://localhost:${PORT}/index.html\n`);
   });
-}
+});
 
-startServer();
+
+
+
