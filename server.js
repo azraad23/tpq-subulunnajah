@@ -1,5 +1,5 @@
 /**
- * © 2026 SUBULUNNAJAH - All Rights Reserved
+ * (c) 2026 SUBULUNNAJAH - All Rights Reserved
  * Project: TPQ Subulunnajah
  */
 const express = require('express');
@@ -14,7 +14,6 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ─── Middleware ─────────────────────────────────────────────────────────────
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -33,7 +32,6 @@ app.use(session({
   cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// ─── Multer (Upload Bukti Transfer) ─────────────────────────────────────────
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
@@ -54,7 +52,6 @@ const upload = multer({
   }
 });
 
-// ─── Database Connection ────────────────────────────────────────────────────
 const dbConfig = {
   host: process.env.MYSQLHOST || 'localhost',
   user: process.env.MYSQLUSER || 'root',
@@ -70,23 +67,17 @@ async function initDB() {
   try {
     pool = mysql.createPool(dbConfig);
     await pool.query('SELECT 1');
-    console.log('✅ Database terhubung');
+    console.log('Database terhubung');
   } catch (err) {
-    console.error('❌ Gagal koneksi database:', err.message);
-    console.log('⚠️ Pastikan MySQL berjalan dan database sudah dibuat via database.sql');
+    console.error('Gagal koneksi database:', err.message);
     process.exit(1);
   }
 }
 
-// ─── Middleware Auth ────────────────────────────────────────────────────────
 function requireAdmin(req, res, next) {
   if (req.session && req.session.adminId) return next();
   res.status(401).json({ success: false, message: 'Unauthorized' });
 }
-
-// =============================================================================
-// AUTH ROUTES
-// =============================================================================
 
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
@@ -115,10 +106,6 @@ app.get('/api/me', (req, res) => {
     res.json({ loggedIn: false });
   }
 });
-
-// =============================================================================
-// SANTRI ROUTES
-// =============================================================================
 
 app.get('/api/santri', requireAdmin, async (req, res) => {
   try {
@@ -161,10 +148,6 @@ app.delete('/api/santri/:id', requireAdmin, async (req, res) => {
   }
 });
 
-// =============================================================================
-// PEMBAYARAN ROUTES
-// =============================================================================
-
 app.get('/api/pembayaran', requireAdmin, async (req, res) => {
   try {
     const { status, bulan, tahun } = req.query;
@@ -192,7 +175,7 @@ app.get('/api/pembayaran/stats', requireAdmin, async (req, res) => {
       [tahun]
     );
     const [summary] = await pool.query(
-      `SELECT 
+      `SELECT
         COUNT(*) as total_transaksi,
         SUM(CASE WHEN status='disetujui' THEN nominal ELSE 0 END) as total_pemasukan,
         SUM(CASE WHEN status='menunggu' THEN 1 ELSE 0 END) as menunggu_validasi,
@@ -242,13 +225,10 @@ app.patch('/api/pembayaran/:id/validasi', requireAdmin, async (req, res) => {
   }
 });
 
-// =============================================================================
-// START SERVER
-// =============================================================================
 async function startServer() {
   await initDB();
   app.listen(PORT, () => {
-    console.log(`\n🕌 TPQ Subulunnajah Server berjalan di Port: ${PORT}`);
+    console.log('TPQ Subulunnajah Server berjalan di Port: ' + PORT);
   });
 }
 
